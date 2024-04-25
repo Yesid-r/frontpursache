@@ -23,7 +23,7 @@ const RegisterCustomer = () => {
 
     }
     return (
-        <div>
+        <div className='max-w-md mx-auto'>
             <div className='w-full px-8 md:px-32 lg:px-24'>
                 <form class="bg-white rounded-md shadow-2xl p-5 mt-3" >
                     <h1 class="text-gray-800 font-bold text-2xl mb-1">Registrar cliente</h1>

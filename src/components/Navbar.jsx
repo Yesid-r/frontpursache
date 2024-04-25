@@ -38,6 +38,11 @@ const Navbar = () => {
       href: 'list-deliverys',
       current: false,
       
+    },{
+      name: 'Registrar por fecha',
+      href: '/deliverysByFecha',
+      current: false,
+      
     }
   ];
 
