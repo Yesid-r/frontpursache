@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { BASE_URL } from '../utils/constants';
 import RegisterDelivery from './RegisterDelivery';
+import { calculateTotalBottles, calculateTotalBottlesByDay, getDeliveryQuantity } from '../utils/functions_count';
 
 const TableDelivery = () => {
     const user_id = "661fdfe5ce2a67a15ead2115";
     const [dataCustomer, setDataCustomer] = useState();
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const startDate = '2024-04-20';
+    const endDate = '2024-04-26'; 
 
     useEffect(() => {
         const getCustomers = async () => {
             try {
-                const response = await fetch(`${BASE_URL}/customer/getCustomers/${user_id}`);
+                const response = await fetch(`${BASE_URL}/customer/getCustomers/${user_id}?startDate=${startDate}&endDate=${endDate}`);
                 if (response.ok) {
                     const data = await response.json();
                     setDataCustomer(data.data);
@@ -22,33 +25,16 @@ const TableDelivery = () => {
         getCustomers();
     }, [user_id]);
 
-    const getDeliveryQuantity = (customer, index) => {
-        if (customer.deliveries && customer.deliveries.length > index) {
-            return customer.deliveries[index].quantity;
-        }
-        return '0';
-    };
 
-    const calculateTotalBottles = (customer) => {
-        let total = 0;
-        if (customer.deliveries) {
-            customer.deliveries.forEach(delivery => {
-                total += delivery.quantity;
-            });
-        }
-        return total;
-    };
 
-    const calculateTotalBottlesByDay = (index) => {
-        let total = 0;
-        if (dataCustomer) {
-            dataCustomer.forEach(customer => {
-                total += parseInt(getDeliveryQuantity(customer, index), 10);
-            });
-        }
-        return total;
-    };
 
+    function ConvertirBotellasACantinas({ botellas }) {
+        const botellasPorCantina = 55;
+        const cantinas = Math.floor(botellas / botellasPorCantina);
+        const restoBotellas = botellas % botellasPorCantina;
+    
+        return ( cantinas + ',' + restoBotellas);
+    }
     const handleOpenModal = async (_id) => {
         try {
             const response = await fetch(`${BASE_URL}/customer/getCustomer/${_id}`);
@@ -124,9 +110,20 @@ const TableDelivery = () => {
                     <tr>
                         <td className="px-6 py-4 whitespace-nowrap">Total botellas por día:</td>
                         <td ><span></span></td>
-                        <td colSpan="8">
+                        <td colSpan="9">
                             {[...Array(7)].map((_, index) => (
-                                <span key={index} className="px-6 py-4 whitespace-nowrap">{calculateTotalBottlesByDay(index)}</span>
+                                <span key={index} className="px-6 py-4 whitespace-nowrap">{calculateTotalBottlesByDay(index, dataCustomer)}  </span>
+                                
+                            ))}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td className='px-6 py-4 whitespace-nowrap'>Total cantinas</td>
+                        <td><span></span></td>
+                        <td colSpan="9">
+                        {[...Array(7)].map((_, index) => (
+                                <span key={index} className="px-6 py-4 whitespace-nowrap"> <ConvertirBotellasACantinas botellas={calculateTotalBottlesByDay(index)}  /> </span>
+                                
                             ))}
                         </td>
                     </tr>
