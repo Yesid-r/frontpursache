@@ -3,29 +3,36 @@ import { BASE_URL } from '../utils/constants';
 
 const RegisterDelivery2 = ({ customer, date }) => {
     const [quantity, setQuantity] = useState(1);
-    const [selectedDate, setSelectedDate] = useState('');
 
     const handleQuantityChange = (event) => {
         setQuantity(event.target.value);
     };
 
     const handleDateChange = () => {
-        const date = prompt("Please enter the delivery date (YYYY-MM-DD):");
-        setSelectedDate(date);
+        
     };
 
     const handleSubmit = async () => {
         try {
+            
             const response = await fetch(`${BASE_URL}/delivery/createDelivery/661fdfe5ce2a67a15ead2115`, {
                 method: 'POST',
                 headers: { 'Content-type': 'application/json' },
-                body: JSON.stringify({ customer_id: customer._id, quantity, date: selectedDate })
+                body: JSON.stringify({ customer_id: customer._id, quantity, date: date })
             })
 
             const data = await response.json()
             alert(data.message)
+            if(data.success){
+                //window.location.href = "/deliverysByFecha"
+            }
         } catch (error) {
             alert(error.message);
+        }
+    };
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            handleSubmit();
         }
     };
 
@@ -40,6 +47,7 @@ const RegisterDelivery2 = ({ customer, date }) => {
                         type="number"
                         value={quantity}
                         onChange={handleQuantityChange}
+                        onKeyPress={handleKeyPress}
                         className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     />
                 </div>

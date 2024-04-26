@@ -30,7 +30,7 @@ const RegisterDeliverysAtDay = () => {
     };
 
     const handleSubmit = async () => {
-        // Implementa la lógica de registro aquí si es necesario
+
     };
 
     return (
@@ -47,12 +47,24 @@ const RegisterDeliverysAtDay = () => {
             <button className='bg-blue-500 hover:bg-blue-700 text-white justify-center rounded' onClick={handleSubmit}>
                 Registrar todos
             </button>
-            <Carousel className=' rounded-xl bg-blue-gray-100 '>
-                {/* Verifica que RegisterDelivery2 se esté utilizando correctamente */}
-                {customers.map((customer) => (
-                    <RegisterDelivery2 key={customer._id} customer={customer} date={selectedDate} />
-                ))}
-            </Carousel>
+            {
+                customers.length > 0 ? <>
+                    <Carousel className=' rounded-xl bg-blue-gray-100 '>
+
+
+                        {customers.map((customer) => (
+                            <RegisterDelivery2 key={customer._id} customer={customer} date={selectedDate} />
+                        ))}
+                    </Carousel>
+
+                </> : <>
+                    <div className=''>
+                        <h1>No hay registros</h1>
+                    </div>
+
+                </>
+            }
+
         </div>
     );
 };
