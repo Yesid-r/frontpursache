@@ -2,38 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { BASE_URL } from '../utils/constants';
 import RegisterDelivery from './RegisterDelivery';
 import { calculateTotalBottles, calculateTotalBottlesByDay, getDeliveryQuantity } from '../utils/functions_count';
+import { Button } from '@material-tailwind/react';
 
 const TableDelivery = () => {
     const user_id = "661fdfe5ce2a67a15ead2115";
     const [dataCustomer, setDataCustomer] = useState();
     const [selectedCustomer, setSelectedCustomer] = useState(null);
-    const startDate = '2024-04-20';
-    const endDate = '2024-04-26'; 
+    const [startDate, setStartDate] = useState('2024-04-27');
+    const [endDate, setEndDate] = useState('2024-05-03');
 
     useEffect(() => {
-        const getCustomers = async () => {
-            try {
-                const response = await fetch(`${BASE_URL}/customer/getCustomers/${user_id}?startDate=${startDate}&endDate=${endDate}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setDataCustomer(data.data);
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        }
-        getCustomers();
+
+        //getCustomers();
     }, [user_id]);
-
-
-
-
+    const getCustomers = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/customer/getCustomers/${user_id}?startDate=${startDate}&endDate=${endDate}`);
+            if (response.ok) {
+                const data = await response.json();
+                setDataCustomer(data.data);
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
     function ConvertirBotellasACantinas({ botellas }) {
         const botellasPorCantina = 55;
         const cantinas = Math.floor(botellas / botellasPorCantina);
         const restoBotellas = botellas % botellasPorCantina;
-    
-        return ( cantinas + ',' + restoBotellas);
+
+        return (cantinas + ',' + restoBotellas);
     }
     const handleOpenModal = async (_id) => {
         try {
@@ -44,6 +42,12 @@ const TableDelivery = () => {
             console.error('Error fetching customer data:', error);
         }
     }
+    const handleStartDateChange = (event) => {
+        setStartDate(event.target.value);
+    };
+    const handleEndDateChange = (event) => {
+        setEndDate(event.target.value);
+    };
 
     const handleCloseModal = () => {
         setSelectedCustomer(null);
@@ -51,6 +55,23 @@ const TableDelivery = () => {
 
     return (
         <div className="overflow-x-auto">
+            <div>
+                <div className="mb-4 max-w-sm mx-auto m-3 rounded-md">
+                    <input
+                        type="date"
+                        value={startDate}
+                        onChange={handleStartDateChange}
+                        className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    />
+                    <input
+                        type="date"
+                        value={endDate}
+                        onChange={handleEndDateChange}
+                        className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                    />
+                    <Button size='sm' className='max-w-sm mx-auto ' onClick={()=>{getCustomers()}} >Buscar datos </Button>
+                </div>
+            </div>
             <table className="max-w-lg mx-auto m-3 rounded-md divide-y divide-gray-200">
                 <thead>
                     <tr>
@@ -91,9 +112,9 @@ const TableDelivery = () => {
                                     <td key={index} className="px-6 py-4 whitespace-nowrap">{getDeliveryQuantity(customer, index)}</td>
                                 ))}
                                 <td className="px-6 py-4 whitespace-nowrap">{customer.customer.price_per_bottle.toLocaleString('es-CO', {
-                                        style: 'currency',
-                                        currency: 'COP',
-                                    })}</td>
+                                    style: 'currency',
+                                    currency: 'COP',
+                                })}</td>
                                 <td className='px-6 py-4 whitespace-nowrap'>{calculateTotalBottles(customer)}</td>
                                 <td className='px-6 py-4 whitespace-nowrap'>
                                     {(calculateTotalBottles(customer) * customer.customer.price_per_bottle).toLocaleString('es-CO', {
@@ -106,14 +127,14 @@ const TableDelivery = () => {
                     ) : (
                         <tr><td colSpan="9" className="px-6 py-4 text-center">No hay datos</td></tr>
                     )}
-                    
+
                     <tr>
                         <td className="px-6 py-4 whitespace-nowrap">Total botellas por día:</td>
                         <td ><span></span></td>
                         <td colSpan="9">
                             {[...Array(7)].map((_, index) => (
                                 <span key={index} className="px-6 py-4 whitespace-nowrap">{calculateTotalBottlesByDay(index, dataCustomer)}  </span>
-                                
+
                             ))}
                         </td>
                     </tr>
@@ -121,9 +142,9 @@ const TableDelivery = () => {
                         <td className='px-6 py-4 whitespace-nowrap'>Total cantinas</td>
                         <td><span></span></td>
                         <td colSpan="9">
-                        {[...Array(7)].map((_, index) => (
-                                <span key={index} className="px-6 py-4 whitespace-nowrap"> <ConvertirBotellasACantinas botellas={calculateTotalBottlesByDay(index)}  /> </span>
-                                
+                            {[...Array(7)].map((_, index) => (
+                                <span key={index} className="px-6 py-4 whitespace-nowrap"> <ConvertirBotellasACantinas botellas={calculateTotalBottlesByDay(index)} /> </span>
+
                             ))}
                         </td>
                     </tr>

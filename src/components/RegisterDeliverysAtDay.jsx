@@ -7,6 +7,7 @@ import RegisterDelivery from './RegisterDelivery';
 const RegisterDeliverysAtDay = () => {
     const user_id = "661fdfe5ce2a67a15ead2115";
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+    
     const [customers, setCustomers] = useState([]);
 
     useEffect(() => {
