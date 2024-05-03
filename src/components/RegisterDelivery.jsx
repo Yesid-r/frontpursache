@@ -23,7 +23,22 @@ const RegisterDelivery = ({ customer, onClose }) => {
             })
 
             const data = await response.json()
-            alert(data.message)
+            if(data.success){
+                alert(data.message)
+            }else{
+                console.log(` dataaaaa ${data.data._id}`)
+                const confirmacion = window.confirm('¿Desea modificar la entrega?');
+                if (confirmacion) {
+                  const response = await fetch(`${BASE_URL}/delivery/updateDelivery`, {
+                    method: 'PUT',
+                    headers:{'Content-type': 'application/json'},
+                    body: JSON.stringify({_id: data.data._id, quantity: data.data.quantity})
+                  })
+                  const data = await response.json()
+                  alert(data.message)
+                }
+            }
+            
 
         } catch (error) {
             
